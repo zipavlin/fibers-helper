@@ -1,0 +1,38 @@
+{
+    "name": "fibers/helper",
+    "description": "Laravel helper methods used in fibers, fibers-rocket and fibers-captain.",
+    "type": "laravel-package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Žiga Pavlin",
+            "email": "ziga.pavle@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "axdlee/laravel-config-writer": "^1.0",
+        "eddiriarte/console-select": "^2.0",
+        "laravel/framework": "5.8.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fibers\\Helper\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Fibers\\Helper\\FibersHelperServiceProvider"
+            ],
+            "aliases": {
+                "ModelHelper": "Fibers\\Helper\\Facades\\ModelHelper",
+                "ModelsHelper": "Fibers\\Helper\\Facades\\ModelsHelper",
+                "MemoryHelper": "Fibers\\Helper\\Facades\\MemoryHelper",
+                "TemplateHelper": "Fibers\\Helper\\Facades\\TemplateHelper",
+                "UserHelper": "Fibers\\Helper\\Facades\\UserHelper",
+                "ViewHelper": "Fibers\\Helper\\Facades\\ViewHelper"
+            }
+        }
+    }
+}
