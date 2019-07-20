@@ -17,8 +17,9 @@ class FibersHelperServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->loadDependencies();
-        $this->loadConfig();
+        $this->mergeConfigFrom(
+            __DIR__.'/config/fibers.php', 'fibers'
+        );
     }
 
     /**
@@ -37,20 +38,6 @@ class FibersHelperServiceProvider extends ServiceProvider
 
         // publish vendor files
         $this->publishVendorFiles();
-    }
-    // loading helpers
-    private function loadDependencies()
-    {
-        // register required service providers
-        $this->app->register('Axdlee\Config\ConfigServiceProvider');
-        $this->app->register('EddIriarte\Console\Providers\SelectServiceProvider');
-    }
-    private function loadConfig()
-    {
-        // merge configs
-        $this->mergeConfigFrom(
-            __DIR__.'/config/fibers.php', 'fibers'
-        );
     }
 
     // publishing helpers
