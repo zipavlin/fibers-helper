@@ -111,7 +111,7 @@ class Template
 
         // check if folder exists
         if (!file_exists($dir = dirname($filepath))) {
-            mkdir($dir, 755, true);
+            mkdir($dir, 0755, true);
         }
 
         // write file
