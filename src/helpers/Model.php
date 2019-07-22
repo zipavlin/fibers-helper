@@ -13,6 +13,7 @@ namespace Fibers\Helper\Helpers;
 
 use Fibers\Helper\Traits\Collect;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -221,13 +222,25 @@ class Model
     }
 
     /**
+     * Get FormRequest for this model
+     * @return null|FormRequest
+     */
+    public function request()
+    {
+        if (file_exists(app_path("Http/Requests/{$this->name}Request.php"))) {
+            $formRequest = "App\Http\Requests\\{$this->name}Request";
+            return new $formRequest();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get model's attributes
-     * @param bool $deepAnalysis
      * @return Collection
      */
-    public function attributes (bool $deepAnalysis = false): Collection
+    public function attributes (): Collection
     {
-        // TODO: do deep analysis, comparing with FormRequest, Controller, Model, ...
         // TODO: save this to cache
         $hidden = $this->hidden()->toArray();
         try {
@@ -253,12 +266,20 @@ class Model
 
     /**
      * Build validation rules
-     * @param bool $fillableOnly = true
+     * @param bool $fillableOnly: true
+     * @param bool $deepAnalysis: false
      * @return Collection
      */
-    public function rules ($fillableOnly = true): Collection
+    public function rules (bool $fillableOnly = true, bool $deepAnalysis = false): Collection
     {
-        // TODO: try to get rules from FormRequest if exist
+        // try to get rules from FormRequest if exist
+        if ($deepAnalysis and $request = $this->request()) {
+            $formRequestRules = collect($request->rules());
+        } else {
+            $formRequestRules = collect();
+        }
+
+        // map attributes to rules
         return $this
             ->attributes()
             ->when($fillableOnly, function ($collection) {
@@ -270,13 +291,15 @@ class Model
             ->filter(function ($item) {
                 return !$item->hidden && ($item->required or $this->attributeValidationType($item->type));
             })
-            ->mapWithKeys(function ($item) {
+            ->mapWithKeys(function ($item) use ($formRequestRules) {
                 $rules = collect();
                 if ($item->required) $rules->push("required");
                 if ($type = $this->attributeValidationType($item->type)) $rules->push($type);
                 if ($type === "string" and $item->arguments->count()) $rules->push("max:{$item->arguments->get(0)}");
                 if ($item->key === "unique") $rules->push("unique:{$this->table()}");
-                return [$item->name => $rules->join("|")];
+                // join formRequestRules
+                $rules = $rules->concat($formRequestRules->get($item->name) ? explode("|", $formRequestRules->get($item->name)) : []);
+                return [$item->name => $rules->unique()->join('|')];
             });
     }
 

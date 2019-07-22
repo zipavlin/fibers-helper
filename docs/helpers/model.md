@@ -106,11 +106,18 @@ Model Helper is "macroable" and "collectable", which allows you to run batch met
      */
 </helper-method>
 
+## Request
+<helper-method method="fillable">
+    /**
+     * Get FormRequest for this model if one exists
+     * @return null|FormRequest
+     */
+</helper-method>
+
 ## Attributes
 <helper-method method="attributes">
     /**
      * Get model's attributes
-     * @param bool $deepAnalysis
      * @return Collection
      */
 </helper-method>
@@ -119,7 +126,8 @@ Model Helper is "macroable" and "collectable", which allows you to run batch met
 <helper-method method="rules">
     /**
      * Build validation rules
-     * @param bool $fillableOnly: default true
+     * @param bool $fillableOnly: true
+     * @param bool $deepAnalysis: false
      * @return Collection
      */
 </helper-method>
