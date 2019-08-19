@@ -33,7 +33,11 @@ class Template
     public function fromFile(string $filename): Template
     {
         // check if filename is a path or really just name and set path to fibers root if true
-        if ($filename === basename($filename)) $filename = FIBERS_ROOT . '/templates/' . $filename;
+        if ($filename === basename($filename)) {
+            $filename = FIBERS_ROOT . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $filename;
+        } else {
+            $filename = DIRECTORY_SEPARATOR === "\\" ? str_replace("/", "\\", $filename) : $filename;
+        }
 
         // check if file exists and load its content
         if (file_exists($filename)) {
