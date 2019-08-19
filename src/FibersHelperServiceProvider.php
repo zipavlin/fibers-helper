@@ -20,6 +20,9 @@ class FibersHelperServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/config/fibers.php', 'fibers'
         );
+        // register required service providers
+        $this->app->register('Axdlee\Config\ConfigServiceProvider');
+        $this->app->register('EddIriarte\Console\Providers\SelectServiceProvider');
     }
 
     /**
